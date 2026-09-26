@@ -1,14 +1,15 @@
 {
-  "decks": [
+  "sections": [
     {
-      "id": "wyznaczniki-macierzy",
-      "title": "Wyznaczniki macierzy",
-      "description": "Definicja, interpretacja geometryczna i własności."
-    },
-    {
-      "id": "odwracanie-macierzy",
-      "title": "Odwracanie macierzy",
-      "description": "Macierz odwrotna, wzór 2×2 i metoda Gaussa-Jordana."
+      "id": "basic-mathematics",
+      "title": "Basic Mathematics",
+      "decks": [
+        {
+          "id": "basic-mathematics-01-cartesian-geometry-and-coordinates",
+          "title": "Lecture 01 · Cartesian Geometry and Coordinates",
+          "description": "From Euclidean geometry to Cartesian coordinates, distance and equations that generate points."
+        }
+      ]
     }
   ]
 }
