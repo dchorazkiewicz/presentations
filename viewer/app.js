@@ -219,7 +219,7 @@ async function loadDeck(deckId) {
   slides.innerHTML = "";
   parts.forEach(function(source) {
     const section = document.createElement("section");
-    section.innerHTML = marked.parse(source, { gfm: true, breaks: false });
+    section.innerHTML = renderMarkdownPreservingMath(source);
     slides.appendChild(section);
   });
 
