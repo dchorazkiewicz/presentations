@@ -561,10 +561,6 @@ body { min-height: 100vh; }
   stroke-width: 4;
 }
 
-.reveal .slides section:has(.interactive-panel) {
-  top: 50% !important;
-}
-
 @media (max-width: 700px) {
   .deck-row {
     grid-template-columns: 38px 1fr auto;
@@ -583,4 +579,38 @@ body { min-height: 100vh; }
   .slider-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Slide positioning and math overflow */
+.reveal .slides section {
+  padding-top: 72px;
+  padding-bottom: 28px;
+}
+
+.reveal .slides section > :first-child {
+  margin-top: 0;
+}
+
+.reveal .formula-box {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.reveal mjx-container {
+  max-width: 100%;
+}
+
+.reveal mjx-container[display="true"] {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: .08em;
+}
+
+@media (max-width: 700px) {
+  .reveal .slides section {
+    padding-top: 92px;
+  }
+
+  .reveal h1 { font-size: 1.85em; }
+  .reveal h2 { font-size: 1.35em; }
 }
