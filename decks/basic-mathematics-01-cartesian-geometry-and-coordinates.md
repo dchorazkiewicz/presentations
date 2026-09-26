@@ -56,7 +56,7 @@ We need to choose:
 Only after these choices does a point receive an ordered pair.
 
 $$
-P longleftrightarrow (x,y)
+P \longleftrightarrow (x,y)
 $$
 
 ---
@@ -81,27 +81,28 @@ The coordinate system is not drawn “all at once”. It is **constructed** from
   </div>
 </div>
 
-<span class="small">The sequence reproduces the logic of the course material: axes → origin → orientation → unit → repeated transfer → subdivision → projection.</span>
+<span class="small">Axes → origin → orientation → unit → repeated transfer → subdivision → projection.</span>
 
 ---
 
 # 4. From a unit segment to a numerical scale
 
-A unit is a **geometric length** that we decide to call (1).
+A unit is a **geometric length** that we decide to call \(1\).
 
 Repeated transfer produces integers:
 
 $$
-0,;1,;2,;3,ldots
+0,\;1,\;2,\;3,\ldots
 $$
 
 Repeated bisection produces finer marks:
 
 $$
-rac12,quad rac14,quad rac34,quad rac18,ldots
+\frac12,\qquad
+\frac14,\qquad
+\frac34,\qquad
+\frac18,\ldots
 $$
-
-The important idea is not the particular fractions.
 
 > The numerical line is built by attaching numbers to geometric positions.
 
@@ -137,7 +138,7 @@ The point is a geometric object. Its coordinates depend on the chosen frame.
 Once the axes, positive directions and unit are fixed, orthogonal projection assigns a unique pair of real numbers to every point.
 
 $$
-P longleftrightarrow (x,y)inmathbb R^2
+P \longleftrightarrow (x,y)\in\mathbb{R}^2
 $$
 
 Conversely, every ordered pair determines exactly one point.
@@ -145,14 +146,15 @@ Conversely, every ordered pair determines exactly one point.
 <div class="formula-box">
 
 $$
-	ext{Euclidean plane with a chosen Cartesian frame}
-;longleftrightarrow;
-mathbb R^2
+\begin{aligned}
+\text{Euclidean plane with a chosen Cartesian frame}
+&\longleftrightarrow \mathbb{R}^2.
+\end{aligned}
 $$
 
 </div>
 
-The plane and (mathbb R^2) are now linked by a **representation**.
+The plane and \(\mathbb{R}^2\) are linked by a **representation**.
 
 ---
 
@@ -161,7 +163,7 @@ The plane and (mathbb R^2) are now linked by a **representation**.
 Take
 
 $$
-P=(x_1,y_1),qquad Q=(x_2,y_2).
+P=(x_1,y_1),\qquad Q=(x_2,y_2).
 $$
 
 Build the auxiliary point
@@ -170,18 +172,18 @@ $$
 R=(x_2,y_1).
 $$
 
-Then (PR) is horizontal and (RQ) is vertical.
+Then \(PR\) is horizontal and \(RQ\) is vertical.
 
 <div class="interactive-panel" data-distance-geometry>
   <div class="jxgbox presentation-board distance-board" data-distance-board></div>
   <div class="distance-readout">
-    <span>(Delta x=)<strong data-distance-dx>3.0</strong></span>
-    <span>(Delta y=)<strong data-distance-dy>4.0</strong></span>
-    <span>(d(P,Q)=)<strong data-distance-value>5.00</strong></span>
+    <span>Δx = <strong data-distance-dx>3.0</strong></span>
+    <span>Δy = <strong data-distance-dy>4.0</strong></span>
+    <span>d(P,Q) = <strong data-distance-value>5.00</strong></span>
   </div>
 </div>
 
-<span class="small">Drag (P) or (Q). The triangle changes, and the numbers follow the geometry.</span>
+<span class="small">Drag \(P\) or \(Q\). The triangle changes, and the numbers follow the geometry.</span>
 
 ---
 
@@ -190,7 +192,9 @@ Then (PR) is horizontal and (RQ) is vertical.
 From the visible right triangle,
 
 $$
-PR=|x_2-x_1|,qquad RQ=|y_2-y_1|.
+PR=|x_2-x_1|,
+\qquad
+RQ=|y_2-y_1|.
 $$
 
 Pythagoras gives
@@ -204,7 +208,7 @@ so
 <div class="formula-box">
 
 $$
-d(P,Q)=sqrt{(x_2-x_1)^2+(y_2-y_1)^2}.
+d(P,Q)=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}.
 $$
 
 </div>
@@ -218,31 +222,31 @@ The formula does **not invent distance**. It encodes an existing geometric lengt
 Let
 
 $$
-P=(1,1),qquad Q=(4,5).
+P=(1,1),\qquad Q=(4,5).
 $$
 
 Then
 
 $$
-Delta x=3,qquad Delta y=4,
+\Delta x=3,\qquad \Delta y=4,
 $$
 
 hence
 
 $$
-d(P,Q)=sqrt{3^2+4^2}=5.
+d(P,Q)=\sqrt{3^2+4^2}=5.
 $$
 
 This is the basic pattern of analytic geometry:
 
 $$
-	ext{geometry}
-longrightarrow
-	ext{construction}
-longrightarrow
-	ext{equation}
-longrightarrow
-	ext{number}.
+\text{geometry}
+\longrightarrow
+\text{construction}
+\longrightarrow
+\text{equation}
+\longrightarrow
+\text{number}.
 $$
 
 ---
@@ -259,7 +263,7 @@ $$
 y=2x+1,
 $$
 
-each input (x) generates the point
+each input \(x\) generates the point
 
 $$
 (x,2x+1).
@@ -268,7 +272,7 @@ $$
 <div class="interactive-panel" data-function-generator>
   <div class="coordinate-readout" data-function-readout></div>
   <svg class="geometry-svg function-svg" viewBox="0 0 800 420" data-function-svg></svg>
-  <label class="single-slider">Choose (x)
+  <label class="single-slider">Choose \(x\)
     <input type="range" min="-4" max="4" step="0.5" value="1" data-function-x>
   </label>
 </div>
@@ -277,30 +281,27 @@ $$
 
 # 11. A graph is a set of generated points
 
-For (y=2x+1):
+For \(y=2x+1\):
 
-| (x) | (y) | point |
+| \(x\) | \(y\) | point |
 |---:|---:|---|
-| (-1) | (-1) | ((-1,-1)) |
-| (0) | (1) | ((0,1)) |
-| (1) | (3) | ((1,3)) |
+| \(-1\) | \(-1\) | \((-1,-1)\) |
+| \(0\) | \(1\) | \((0,1)\) |
+| \(1\) | \(3\) | \((1,3)\) |
 
-The graph is not the equation itself.
-
-It is the set
+The graph is the set
 
 $$
-{(x,y)inmathbb R^2:;y=2x+1}.
+\left\{(x,y)\in\mathbb{R}^2:\;y=2x+1\right\}.
 $$
 
 Again:
 
-> object (
-eq) representation.
+> object \(\neq\) representation.
 
 ---
 
-# 12. Not every equation is a function (y=f(x))
+# 12. Not every equation is a function \(y=f(x)\)
 
 Consider the circle
 
@@ -308,10 +309,10 @@ $$
 x^2+y^2=4.
 $$
 
-For a fixed (x),
+For a fixed \(x\),
 
 $$
-y=pmsqrt{4-x^2}.
+y=\pm\sqrt{4-x^2}.
 $$
 
 One input may correspond to two points.
@@ -344,25 +345,21 @@ This idea will later become a systematic method for solving systems of equations
 
 # 14. Regions come from inequalities
 
-Equations usually describe boundaries or lower-dimensional sets.
-
-Inequalities describe whole regions.
+Equations describe boundaries or lower-dimensional sets. Inequalities describe whole regions.
 
 For example,
 
 $$
-yge x^2-2
+y\ge x^2-2
 $$
 
 and
 
 $$
-yle x+2
+y\le x+2
 $$
 
 select all points lying **above** the parabola and **below** the line.
-
-Analytic geometry turns geometric inclusion into logical conditions on numbers.
 
 ---
 
@@ -371,18 +368,18 @@ Analytic geometry turns geometric inclusion into logical conditions on numbers.
 A curve can also be generated by one parameter:
 
 $$
-tlongmapsto (x(t),y(t)).
+t\longmapsto (x(t),y(t)).
 $$
 
-For a circle of radius (3),
+For a circle of radius \(3\),
 
 $$
-x(t)=3cos t,qquad y(t)=3sin t.
+x(t)=3\cos t,
+\qquad
+y(t)=3\sin t.
 $$
 
-One number (t) moves one point through the plane.
-
-The trace of that motion is the curve.
+One number \(t\) moves one point through the plane. The trace of that motion is the curve.
 
 ---
 
@@ -397,11 +394,11 @@ Three central ideas:
 <div class="formula-box">
 
 $$
-	ext{geometry}
-;longleftrightarrow;
-	ext{coordinates}
-;longleftrightarrow;
-	ext{algebra}
+\text{geometry}
+\longleftrightarrow
+\text{coordinates}
+\longleftrightarrow
+\text{algebra}
 $$
 
 </div>
