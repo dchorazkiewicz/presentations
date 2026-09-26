@@ -208,14 +208,21 @@ body { min-height: 100vh; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.home-link {
+.deck-toolbar {
   position: fixed;
   top: max(16px, env(safe-area-inset-top));
   left: max(16px, env(safe-area-inset-left));
   z-index: 90;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.home-link {
+  position: static;
   text-decoration: none;
   color: rgba(255,255,255,.72);
-  background: rgba(9,13,24,.62);
+  background: rgba(9,13,24,.68);
   backdrop-filter: blur(12px);
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -223,7 +230,12 @@ body { min-height: 100vh; }
   font: 600 13px/1 system-ui, sans-serif;
 }
 
-.home-link:hover { color: white; }
+.toolbar-button {
+  appearance: none;
+  cursor: pointer;
+}
+
+.home-link:hover { color: white; background: rgba(255,255,255,.08); }
 
 .reveal {
   background:
