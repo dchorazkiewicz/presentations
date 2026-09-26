@@ -8,41 +8,25 @@
 
 # 1. Co znaczy „odwrócić” macierz?
 
-Dla macierzy kwadratowej $A$ szukamy macierzy $A^{-1}$, takiej że
+Dla macierzy kwadratowej $A$ szukamy $A^{-1}$ takiej, że
 
 $$
 AA^{-1}=A^{-1}A=I.
-$$
-
-To odpowiednik liczby odwrotnej:
-
-$$
-a\cdot \frac1a = 1.
 $$
 
 ---
 
 # 2. Kiedy odwrotność istnieje?
 
-Macierz $A$ jest odwracalna wtedy i tylko wtedy, gdy
-
 $$
-\boxed{\det$A$\neq 0}.
+\boxed{\det(A)\neq 0}
 $$
 
-Jeżeli
-
-$$
-\det$A$=0,
-$$
-
-macierz jest osobliwa i $A^{-1}$ nie istnieje.
+Jeżeli $\det(A)=0$, macierz odwrotna nie istnieje.
 
 ---
 
-# 3. Wzór dla macierzy $2\\times 2$
-
-Dla
+# 3. Wzór dla $2\times 2$
 
 $$
 A=
@@ -51,8 +35,6 @@ a&b\\
 c&d
 \end{bmatrix}
 $$
-
-mamy
 
 $$
 A^{-1}
@@ -66,25 +48,23 @@ $$
 
 ---
 
-# 4. Przykład $2\\times 2$
-
-Niech
+# 4. Przykład
 
 $$
 A=
 \begin{bmatrix}
 2&1\\
 5&3
-\end{bmatrix}.
+\end{bmatrix}
 $$
 
-Najpierw
+Ponieważ
 
 $$
-\det$A$=2\cdot3-1\cdot5=1.
+\det(A)=2\cdot3-1\cdot5=1,
 $$
 
-Zatem
+to
 
 $$
 A^{-1}=
@@ -97,8 +77,6 @@ $$
 ---
 
 # 5. Kontrola wyniku
-
-Sprawdzamy iloczyn:
 
 $$
 \begin{bmatrix}
@@ -116,23 +94,17 @@ $$
 \end{bmatrix}.
 $$
 
-Czyli rzeczywiście
-
-$$
-AA^{-1}=I.
-$$
-
 ---
 
 # 6. Metoda Gaussa-Jordana
 
-Dla większych macierzy wygodna jest macierz rozszerzona:
+Startujemy od
 
 $$
 [A\mid I].
 $$
 
-Wykonujemy operacje elementarne na wierszach, aż otrzymamy
+Operacjami na wierszach dążymy do
 
 $$
 [I\mid A^{-1}].
@@ -140,43 +112,23 @@ $$
 
 ---
 
-# 7. Schemat
-
-Start:
+# 7. Operacje elementarne
 
 $$
-\left[
-\begin{array}{c|c}
-A&I
-\end{array}
-\right]
+R_i\leftrightarrow R_j
 $$
 
-Operacje elementarne:
-
 $$
-R_i\leftrightarrow R_j,
-\qquad
-R_i\leftarrow \lambda R_i,
-\qquad
-R_i\leftarrow R_i+\lambda R_j.
+R_i\leftarrow \lambda R_i
 $$
 
-Cel:
-
 $$
-\left[
-\begin{array}{c|c}
-I&A^{-1}
-\end{array}
-\right].
+R_i\leftarrow R_i+\lambda R_j
 $$
 
 ---
 
-# 8. Dlaczego metoda działa?
-
-Każda operacja elementarna odpowiada mnożeniu przez macierz elementarną $E$.
+# 8. Dlaczego to działa?
 
 Jeżeli
 
@@ -192,9 +144,7 @@ $$
 
 ---
 
-# 9. Ważna własność
-
-Dla odwracalnych macierzy:
+# 9. Własność iloczynu
 
 $$
 (AB)^{-1}=B^{-1}A^{-1}.
@@ -202,23 +152,9 @@ $$
 
 Kolejność się odwraca.
 
-Podobnie:
-
-$$
-(A^T)^{-1}=$A^{-1}$^T.
-$$
-
 ---
 
 # 10. Podsumowanie
-
-Macierz odwrotna istnieje dokładnie wtedy, gdy
-
-$$
-\det$A$\neq0.
-$$
-
-Dla $2\\times 2$ mamy jawny wzór, a dla większych macierzy praktycznie używamy Gaussa-Jordana.
 
 <div class="formula-box">
 
@@ -227,3 +163,5 @@ AA^{-1}=I
 $$
 
 </div>
+
+Macierz odwrotna istnieje dokładnie wtedy, gdy $\det(A)\neq0$.
