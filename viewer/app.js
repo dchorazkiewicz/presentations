@@ -47,21 +47,18 @@ async function fetchJson(path) {
 }
 
 async function fetchRaw(path) {
-  try {
-    const response = await withTimeout(fetch(rawUrl(path), { cache: "no-store" }), 8000, "Plik prezentacji nie odpowiedział.");
-    if (!response.ok) throw new Error("Raw GitHub: " + response.status);
-    return await response.text();
-  } catch (rawError) {
-    const response = await withTimeout(fetch(apiUrl(path), {
-      cache: "no-store",
-      headers: {
-        "Accept": "application/vnd.github.raw+json",
-        "X-GitHub-Api-Version": "2022-11-28"
-      }
-    }), 8000, "GitHub API nie odpowiedziało.");
-    if (!response.ok) throw rawError;
-    return response.text();
+  const response = await withTimeout(fetch(apiUrl(path), {
+    cache: "no-store",
+    headers: {
+      "Accept": "application/vnd.github.raw+json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    }
+  }), 8000, "GitHub API nie odpowiedziało.");
+
+  if (!response.ok) {
+    throw new Error("GitHub API: " + response.status + " " + response.statusText);
   }
+  return response.text();
 }
 
 function humanize(filename) {
