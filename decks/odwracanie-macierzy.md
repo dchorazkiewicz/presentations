@@ -8,7 +8,7 @@
 
 # 1. Co znaczy „odwrócić” macierz?
 
-Dla macierzy kwadratowej (A) szukamy macierzy (A^{-1}), takiej że
+Dla macierzy kwadratowej $A$ szukamy macierzy $A^{-1}$, takiej że
 
 $$
 AA^{-1}=A^{-1}A=I.
@@ -24,23 +24,23 @@ $$
 
 # 2. Kiedy odwrotność istnieje?
 
-Macierz (A) jest odwracalna wtedy i tylko wtedy, gdy
+Macierz $A$ jest odwracalna wtedy i tylko wtedy, gdy
 
 $$
-\boxed{\det(A)\neq 0}.
+\boxed{\det$A$\neq 0}.
 $$
 
 Jeżeli
 
 $$
-\det(A)=0,
+\det$A$=0,
 $$
 
-macierz jest osobliwa i (A^{-1}) nie istnieje.
+macierz jest osobliwa i $A^{-1}$ nie istnieje.
 
 ---
 
-# 3. Wzór dla macierzy (2\times2)
+# 3. Wzór dla macierzy $2\\times 2$
 
 Dla
 
@@ -66,7 +66,7 @@ $$
 
 ---
 
-# 4. Przykład (2\times2)
+# 4. Przykład $2\\times 2$
 
 Niech
 
@@ -81,7 +81,7 @@ $$
 Najpierw
 
 $$
-\det(A)=2\cdot3-1\cdot5=1.
+\det$A$=2\cdot3-1\cdot5=1.
 $$
 
 Zatem
@@ -176,7 +176,7 @@ $$
 
 # 8. Dlaczego metoda działa?
 
-Każda operacja elementarna odpowiada mnożeniu przez macierz elementarną (E).
+Każda operacja elementarna odpowiada mnożeniu przez macierz elementarną $E$.
 
 Jeżeli
 
@@ -205,7 +205,7 @@ Kolejność się odwraca.
 Podobnie:
 
 $$
-(A^T)^{-1}=(A^{-1})^T.
+(A^T)^{-1}=$A^{-1}$^T.
 $$
 
 ---
@@ -215,10 +215,10 @@ $$
 Macierz odwrotna istnieje dokładnie wtedy, gdy
 
 $$
-\det(A)\neq0.
+\det$A$\neq0.
 $$
 
-Dla (2\times2) mamy jawny wzór, a dla większych macierzy praktycznie używamy Gaussa-Jordana.
+Dla $2\\times 2$ mamy jawny wzór, a dla większych macierzy praktycznie używamy Gaussa-Jordana.
 
 <div class="formula-box">
 
