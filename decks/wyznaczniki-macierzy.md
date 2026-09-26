@@ -6,7 +6,7 @@
 
 ---
 
-# 1. Wyznacznik macierzy (2\times 2)
+# 1. Wyznacznik macierzy $2\\times 2$
 
 Dla macierzy
 
@@ -23,7 +23,7 @@ wyznacznik definiujemy jako
 <div class="formula-box">
 
 $$
-\det(A)=ad-bc
+\det$A$=ad-bc
 $$
 
 </div>
@@ -47,7 +47,7 @@ $$
 Wtedy
 
 $$
-\det(A)=3\cdot 4-2\cdot 5=12-10=\boxed{2}.
+\det$A$=3\cdot 4-2\cdot 5=12-10=\boxed{2}.
 $$
 
 > Kolejność ma znaczenie: iloczyn głównej przekątnej minus iloczyn drugiej przekątnej.
@@ -56,7 +56,7 @@ $$
 
 # 3. Co oznacza wyznacznik geometrycznie?
 
-Macierz (A) opisuje przekształcenie liniowe.
+Macierz $A$ opisuje przekształcenie liniowe.
 
 Jeżeli
 
@@ -71,14 +71,14 @@ $$
 to wartość
 
 $$
-|\det(A)|
+|\det$A$|
 $$
 
 jest współczynnikiem zmiany **pola**.
 
-- ( |\det(A)|=2 ) — pola są dwa razy większe,
-- ( |\det(A)|=\tfrac12 ) — pola są dwa razy mniejsze,
-- ( \det(A)=0 ) — płaszczyzna zostaje „spłaszczona”.
+- ( |\det$A$|=2 ) — pola są dwa razy większe,
+- ( |\det$A$|=\tfrac12 ) — pola są dwa razy mniejsze,
+- ( \det$A$=0 ) — płaszczyzna zostaje „spłaszczona”.
 
 ---
 
@@ -87,18 +87,18 @@ jest współczynnikiem zmiany **pola**.
 Wyznacznik niesie także informację o **orientacji**.
 
 $$
-\det(A)>0
+\det$A$>0
 \quad\Longrightarrow\quad
 \text{orientacja zachowana}
 $$
 
 $$
-\det(A)<0
+\det$A$<0
 \quad\Longrightarrow\quad
 \text{orientacja odwrócona}
 $$
 
-Przykład odbicia względem osi (y):
+Przykład odbicia względem osi $y$:
 
 $$
 A=
@@ -107,12 +107,12 @@ A=
 0 & 1
 \end{bmatrix},
 \qquad
-\det(A)=-1.
+\det$A$=-1.
 $$
 
 ---
 
-# 5. Macierz (3\times 3)
+# 5. Macierz $3\\times 3$
 
 Dla
 
@@ -128,13 +128,13 @@ $$
 możemy rozwinąć wyznacznik względem pierwszego wiersza:
 
 $$
-\det(A)=
+\det$A$=
 a_{11}M_{11}
 -a_{12}M_{12}
 +a_{13}M_{13},
 $$
 
-gdzie (M_{ij}) oznacza odpowiedni minor.
+gdzie $M_{ij}$ oznacza odpowiedni minor.
 
 Znaki układają się w szachownicę:
 
@@ -148,7 +148,7 @@ $$
 
 ---
 
-# 6. Przykład (3\times 3)
+# 6. Przykład $3\\times 3$
 
 $$
 A=
@@ -162,7 +162,7 @@ $$
 Rozwijamy względem pierwszego wiersza:
 
 $$
-\det(A)
+\det$A$
 =
 1\begin{vmatrix}
 -1&2\\
@@ -187,10 +187,10 @@ $$
 
 Wpływ operacji na wierszach na wyznacznik:
 
-| Operacja | Co dzieje się z (det(A))? |
+| Operacja | Co dzieje się z (det$A$)? |
 |---|---|
 | Zamiana dwóch wierszy | zmiana znaku |
-| Pomnożenie wiersza przez (k) | wyznacznik razy (k) |
+| Pomnożenie wiersza przez $k$ | wyznacznik razy $k$ |
 | Dodanie wielokrotności innego wiersza | bez zmian |
 
 Dzięki temu często łatwiej sprowadzić macierz do postaci trójkątnej.
@@ -198,7 +198,7 @@ Dzięki temu często łatwiej sprowadzić macierz do postaci trójkątnej.
 Dla macierzy trójkątnej:
 
 $$
-\det(A)=a_{11}a_{22}\cdots a_{nn}.
+\det$A$=a_{11}a_{22}\cdots a_{nn}.
 $$
 
 ---
@@ -212,7 +212,7 @@ Dla macierzy kwadratowej zachodzi równoważność
 $$
 A^{-1}\text{ istnieje}
 \quad\Longleftrightarrow\quad
-\det(A)\neq 0.
+\det$A$\neq 0.
 $$
 
 </div>
@@ -220,7 +220,7 @@ $$
 Jeżeli
 
 $$
-\det(A)=0,
+\det$A$=0,
 $$
 
 to kolumny (i wiersze) są liniowo zależne, a przekształcenie traci co najmniej jeden wymiar.
@@ -230,25 +230,25 @@ to kolumny (i wiersze) są liniowo zależne, a przekształcenie traci co najmnie
 # 9. Najważniejsze fakty
 
 $$
-\det(AB)=\det(A)\det(B)
+\det(AB)=\det$A$\det(B)
 $$
 
 $$
-\det(A^T)=\det(A)
+\det(A^T)=\det$A$
 $$
 
 $$
-\det(A^{-1})=\frac{1}{\det(A)}
-\qquad (\det(A)\neq 0)
+\det(A^{-1})=\frac{1}{\det$A$}
+\qquad (\det$A$\neq 0)
 $$
 
 oraz
 
 $$
-\det(\lambda A)=\lambda^n\det(A)
+\det(\lambda A)=\lambda^n\det$A$
 $$
 
-dla macierzy (n\times n).
+dla macierzy $n\\times n$.
 
 ---
 
@@ -258,7 +258,7 @@ dla macierzy (n\times n).
 
 $$
 \boxed{
-\det(A)\neq 0
+\det$A$\neq 0
 \iff
 A\text{ jest odwracalna}
 }
