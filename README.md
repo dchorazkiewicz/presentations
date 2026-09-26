@@ -13,3 +13,10 @@ Nowa prezentacja = nowy plik decks/nazwa-prezentacji.md.
 Slajdy rozdzielamy linią zawierającą trzy myślniki.
 
 Wzory matematyczne są renderowane przez MathJax, a prezentacja przez Reveal.js.
+
+## Jednorazowe uruchomienie GitHub Pages
+
+W ustawieniach repozytorium trzeba jednorazowo wybrać:
+Settings → Pages → Build and deployment → Source: GitHub Actions.
+
+Potem uruchomić workflow "Deploy presentation viewer". Kolejne zmiany wyłącznie w decks/ nie uruchamiają deploymentu.
