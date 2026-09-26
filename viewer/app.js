@@ -194,7 +194,8 @@ function renderMarkdownPreservingMath(source) {
   let protectedSource = source
     .replace(/\$\$[\s\S]*?\$\$/g, stash)
     .replace(/\\\[[\s\S]*?\\\]/g, stash)
-    .replace(/\\\([\s\S]*?\\\)/g, stash);
+    .replace(/\\\([\s\S]*?\\\)/g, stash)
+    .replace(/\$(?!\$)[^\n$]+\$/g, stash);
 
   let html = marked.parse(protectedSource, { gfm: true, breaks: false });
 
@@ -250,7 +251,7 @@ async function loadDeck(deckId) {
     controls: true,
     progress: true,
     slideNumber: "c/t",
-    center: true,
+    center: false,
     transition: "fade",
     backgroundTransition: "fade",
     width: 1280,
