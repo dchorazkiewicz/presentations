@@ -3,23 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b1020">
+  <meta name="theme-color" content="#090d18">
   <title>Prezentacje — matematyka i fizyka</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/black.css">
   <link rel="stylesheet" href="./styles.css">
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
 </head>
 <body>
-  <!-- deployment bootstrap -->
   <main id="catalog" class="catalog-shell">
     <header class="catalog-header">
       <div>
         <p class="eyebrow">MATEMATYKA · FIZYKA</p>
         <h1>Prezentacje</h1>
-        <p class="lead">Treść jest pobierana bezpośrednio z repozytorium. Zmiana slajdów nie wymaga ponownego deploymentu strony.</p>
+        <p class="lead">Wybierz prezentację. Slajdy są pobierane bezpośrednio z repozytorium, więc zmiana treści nie wymaga ponownego deploymentu strony.</p>
       </div>
-      <div class="runtime-badge" title="Viewer jest wdrażany osobno od treści">
+      <div class="runtime-badge" title="Viewer wdrażany osobno od treści">
         <span class="status-dot"></span>
         runtime content
       </div>
@@ -35,7 +44,10 @@
     </section>
   </main>
 
-  <a id="home-link" class="home-link" href="./" hidden aria-label="Wróć do listy prezentacji">← Prezentacje</a>
+  <nav id="deck-toolbar" class="deck-toolbar" hidden>
+    <a id="home-link" class="home-link" href="./">← Lista</a>
+    <button id="fullscreen-button" class="home-link toolbar-button" type="button">Pełny ekran</button>
+  </nav>
 
   <div id="deck-view" class="reveal" hidden>
     <div id="slides" class="slides"></div>
@@ -43,12 +55,11 @@
 
   <div id="loading" class="loading" hidden>
     <div class="spinner"></div>
-    <span>Ładowanie prezentacji…</span>
+    <span id="loading-text">Ładowanie prezentacji…</span>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/math/math.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
