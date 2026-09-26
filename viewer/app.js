@@ -1,7 +1,6 @@
 const REPO = "dchorazkiewicz/presentations";
 const BRANCH = "main";
 const API_ROOT = "https://api.github.com/repos/" + REPO + "/contents";
-const RAW_ROOT = "https://raw.githubusercontent.com/" + REPO + "/" + BRANCH;
 
 const catalog = document.getElementById("catalog");
 const deckList = document.getElementById("deck-list");
@@ -18,17 +17,13 @@ function withTimeout(promise, ms, message) {
   return Promise.race([
     promise,
     new Promise(function(_, reject) {
-      setTimeout(function() { reject(new Error(message || "Przekroczono czas oczekiwania.")); }, ms);
+      setTimeout(function() { reject(new Error(message || "The request timed out.")); }, ms);
     })
   ]);
 }
 
 function apiUrl(path) {
   return API_ROOT + "/" + path + "?ref=" + encodeURIComponent(BRANCH) + "&_=" + Date.now();
-}
-
-function rawUrl(path) {
-  return RAW_ROOT + "/" + path + "?_=" + Date.now();
 }
 
 async function fetchJson(path) {
@@ -38,7 +33,7 @@ async function fetchJson(path) {
       "Accept": "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28"
     }
-  }), 8000, "GitHub API nie odpowiedziało.");
+  }), 8000, "GitHub API did not respond.");
 
   if (!response.ok) {
     throw new Error("GitHub API: " + response.status + " " + response.statusText);
@@ -53,7 +48,7 @@ async function fetchRaw(path) {
       "Accept": "application/vnd.github.raw+json",
       "X-GitHub-Api-Version": "2022-11-28"
     }
-  }), 8000, "GitHub API nie odpowiedziało.");
+  }), 8000, "GitHub API did not respond.");
 
   if (!response.ok) {
     throw new Error("GitHub API: " + response.status + " " + response.statusText);
@@ -82,23 +77,61 @@ function showError(message) {
   catalogError.textContent = message;
 }
 
-async function discoverDecks() {
+async function discoverCatalog() {
   try {
-    const entries = await fetchJson("decks");
-    return entries
-      .filter(function(item) {
-        return item.type === "file" && item.name.toLowerCase().endsWith(".md");
-      })
-      .map(function(item) {
-        return {
-          id: item.name.replace(/\.md$/i, ""),
-          name: item.name
-        };
-      });
-  } catch (error) {
-    const manifest = await fetchRaw("decks/index.json");
-    return JSON.parse(manifest).decks;
-  }
+    const manifestText = await fetchRaw("decks/index.json");
+    const manifest = JSON.parse(manifestText);
+    if (Array.isArray(manifest.sections)) return manifest.sections;
+    if (Array.isArray(manifest.decks)) {
+      return [{ id: "presentations", title: "Presentations", decks: manifest.decks }];
+    }
+  } catch (_) {}
+
+  const entries = await fetchJson("decks");
+  const decks = entries
+    .filter(function(item) {
+      return item.type === "file" && item.name.toLowerCase().endsWith(".md");
+    })
+    .map(function(item) {
+      return {
+        id: item.name.replace(/\.md$/i, ""),
+        title: humanize(item.name),
+        description: "Markdown presentation"
+      };
+    });
+
+  return [{ id: "presentations", title: "Presentations", decks }];
+}
+
+function createDeckRow(deck, index) {
+  const row = document.createElement("a");
+  row.className = "deck-row";
+  row.href = "?deck=" + encodeURIComponent(deck.id);
+
+  const number = document.createElement("span");
+  number.className = "deck-index";
+  number.textContent = String(index + 1).padStart(2, "0");
+
+  const copy = document.createElement("div");
+  copy.className = "deck-copy";
+
+  const title = document.createElement("h3");
+  title.textContent = deck.title || humanize(deck.id);
+
+  const description = document.createElement("p");
+  description.textContent = deck.description || "";
+
+  copy.appendChild(title);
+  copy.appendChild(description);
+
+  const arrow = document.createElement("span");
+  arrow.className = "deck-row-arrow";
+  arrow.textContent = "→";
+
+  row.appendChild(number);
+  row.appendChild(copy);
+  row.appendChild(arrow);
+  return row;
 }
 
 async function loadCatalog() {
@@ -107,49 +140,34 @@ async function loadCatalog() {
   refreshButton.disabled = true;
 
   try {
-    const decks = (await discoverDecks()).sort(function(a, b) {
-      return (a.title || a.name || a.id).localeCompare((b.title || b.name || b.id), "pl");
-    });
+    const sections = await discoverCatalog();
 
-    if (!decks.length) {
-      showError("Brak prezentacji.");
+    if (!sections.length) {
+      showError("No presentations found.");
       return;
     }
 
-    decks.forEach(function(deck, index) {
-      const id = deck.id || (deck.name || "").replace(/\.md$/i, "");
-      const titleText = deck.title || humanize(deck.name || id);
-      const description = deck.description || "Markdown · treść pobierana z repozytorium";
+    sections.forEach(function(section) {
+      const block = document.createElement("section");
+      block.className = "catalog-section";
 
-      const card = document.createElement("a");
-      card.className = "deck-card";
-      card.href = "?deck=" + encodeURIComponent(id);
+      const heading = document.createElement("div");
+      heading.className = "catalog-section-title";
+      heading.textContent = section.title || "Presentations";
 
-      const number = document.createElement("span");
-      number.className = "deck-number";
-      number.textContent = "PREZENTACJA " + String(index + 1).padStart(2, "0");
+      const list = document.createElement("div");
+      list.className = "presentation-list";
 
-      const title = document.createElement("h3");
-      title.textContent = titleText;
+      (section.decks || []).forEach(function(deck, index) {
+        list.appendChild(createDeckRow(deck, index));
+      });
 
-      const meta = document.createElement("p");
-      meta.textContent = description;
-
-      const arrow = document.createElement("div");
-      arrow.className = "deck-arrow";
-      arrow.textContent = "→";
-
-      const top = document.createElement("div");
-      top.appendChild(number);
-      top.appendChild(title);
-      top.appendChild(meta);
-
-      card.appendChild(top);
-      card.appendChild(arrow);
-      deckList.appendChild(card);
+      block.appendChild(heading);
+      block.appendChild(list);
+      deckList.appendChild(block);
     });
   } catch (error) {
-    showError("Nie udało się pobrać listy prezentacji. " + error.message);
+    showError("Could not load the presentation list. " + error.message);
   } finally {
     refreshButton.disabled = false;
   }
@@ -202,15 +220,15 @@ async function typesetMathSoon() {
 
 async function loadDeck(deckId) {
   if (!/^[a-zA-Z0-9._-]+$/.test(deckId)) {
-    throw new Error("Nieprawidłowa nazwa prezentacji.");
+    throw new Error("Invalid presentation name.");
   }
 
-  setLoading(true, "Pobieranie slajdów…");
+  setLoading(true, "Loading slides…");
   const markdown = await fetchRaw("decks/" + deckId + ".md");
   const parts = splitSlides(markdown);
 
   if (!parts.length) {
-    throw new Error("Prezentacja nie zawiera slajdów.");
+    throw new Error("The presentation contains no slides.");
   }
 
   slides.innerHTML = "";
@@ -224,7 +242,7 @@ async function loadDeck(deckId) {
   deckView.hidden = false;
   deckToolbar.hidden = false;
 
-  setLoading(true, "Uruchamianie prezentacji…");
+  setLoading(true, "Starting presentation…");
 
   await withTimeout(Reveal.initialize({
     hash: true,
@@ -237,31 +255,41 @@ async function loadDeck(deckId) {
     backgroundTransition: "fade",
     width: 1280,
     height: 720,
-    margin: 0.075,
+    margin: 0.06,
     minScale: 0.2,
     maxScale: 2.0,
     touch: true
-  }), 8000, "Reveal.js nie zakończył inicjalizacji.");
+  }), 8000, "Reveal.js did not finish initialization.");
+
+  window.PresentationInteractives?.init(slides);
+  Reveal.on("slidechanged", function() {
+    setTimeout(function() {
+      window.PresentationInteractives?.refresh();
+    }, 80);
+  });
 
   setLoading(false);
-  document.title = humanize(deckId) + " — Prezentacje";
+  document.title = humanize(deckId) + " · Presentations";
   typesetMathSoon();
+  setTimeout(function() {
+    window.PresentationInteractives?.refresh();
+  }, 250);
 }
 
 fullscreenButton.addEventListener("click", async function() {
   try {
     if (!document.fullscreenElement) {
       await document.documentElement.requestFullscreen();
-      fullscreenButton.textContent = "Wyjdź z pełnego ekranu";
+      fullscreenButton.textContent = "Exit full screen";
     } else {
       await document.exitFullscreen();
-      fullscreenButton.textContent = "Pełny ekran";
+      fullscreenButton.textContent = "Full screen";
     }
   } catch (_) {}
 });
 
 document.addEventListener("fullscreenchange", function() {
-  fullscreenButton.textContent = document.fullscreenElement ? "Wyjdź z pełnego ekranu" : "Pełny ekran";
+  fullscreenButton.textContent = document.fullscreenElement ? "Exit full screen" : "Full screen";
 });
 
 refreshButton.addEventListener("click", loadCatalog);
@@ -278,7 +306,7 @@ refreshButton.addEventListener("click", loadCatalog);
       catalog.hidden = false;
       deckView.hidden = true;
       deckToolbar.hidden = true;
-      showError("Nie udało się otworzyć prezentacji. " + error.message);
+      showError("Could not open the presentation. " + error.message);
       await loadCatalog();
     }
   } else {
