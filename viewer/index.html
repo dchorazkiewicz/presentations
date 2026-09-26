@@ -1,14 +1,15 @@
 <!doctype html>
-<html lang="pl">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#090d18">
-  <title>Prezentacje — matematyka i fizyka</title>
+  <title>Presentations · Mathematics and Physics</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/black.css">
-  <link rel="stylesheet" href="./styles.css?v=6">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.10.1/distrib/jsxgraph.css">
+  <link rel="stylesheet" href="./styles.css?v=7">
   <script>
     window.MathJax = {
       tex: {
@@ -24,11 +25,11 @@
   <main id="catalog" class="catalog-shell">
     <header class="catalog-header">
       <div>
-        <p class="eyebrow">MATEMATYKA · FIZYKA</p>
-        <h1>Prezentacje</h1>
-        <p class="lead">Wybierz prezentację. Slajdy są pobierane bezpośrednio z repozytorium, więc zmiana treści nie wymaga ponownego deploymentu strony.</p>
+        <p class="eyebrow">MATHEMATICS · PHYSICS</p>
+        <h1>Presentations</h1>
+        <p class="lead">Lecture presentations loaded directly from the repository. Presentation-content changes appear after commit and refresh without rebuilding the viewer.</p>
       </div>
-      <div class="runtime-badge" title="Viewer wdrażany osobno od treści">
+      <div class="runtime-badge" title="Presentation content is loaded at runtime">
         <span class="status-dot"></span>
         runtime content
       </div>
@@ -36,8 +37,8 @@
 
     <section aria-labelledby="deck-heading">
       <div class="section-heading">
-        <h2 id="deck-heading">Dostępne prezentacje</h2>
-        <button id="refresh-button" class="ghost-button" type="button">Odśwież listę</button>
+        <h2 id="deck-heading">Courses</h2>
+        <button id="refresh-button" class="ghost-button" type="button">Refresh</button>
       </div>
       <div id="deck-list" class="deck-grid" aria-live="polite"></div>
       <p id="catalog-error" class="error-message" hidden></p>
@@ -45,8 +46,8 @@
   </main>
 
   <nav id="deck-toolbar" class="deck-toolbar" hidden>
-    <a id="home-link" class="home-link" href="./">← Lista</a>
-    <button id="fullscreen-button" class="home-link toolbar-button" type="button">Pełny ekran</button>
+    <a id="home-link" class="home-link" href="./">← List</a>
+    <button id="fullscreen-button" class="home-link toolbar-button" type="button">Full screen</button>
   </nav>
 
   <div id="deck-view" class="reveal" hidden>
@@ -55,11 +56,13 @@
 
   <div id="loading" class="loading" hidden>
     <div class="spinner"></div>
-    <span id="loading-text">Ładowanie prezentacji…</span>
+    <span id="loading-text">Loading presentation…</span>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js"></script>
-  <script src="./app.js?v=6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.10.1/distrib/jsxgraphcore.js"></script>
+  <script src="./interactives.js?v=7"></script>
+  <script src="./app.js?v=7"></script>
 </body>
 </html>
