@@ -1,0 +1,14 @@
+{
+  "decks": [
+    {
+      "id": "wyznaczniki-macierzy",
+      "title": "Wyznaczniki macierzy",
+      "description": "Definicja, interpretacja geometryczna i własności."
+    },
+    {
+      "id": "odwracanie-macierzy",
+      "title": "Odwracanie macierzy",
+      "description": "Macierz odwrotna, wzór 2×2 i metoda Gaussa-Jordana."
+    }
+  ]
+}
