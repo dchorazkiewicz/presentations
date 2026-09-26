@@ -167,6 +167,30 @@ function splitSlides(markdown) {
     .filter(Boolean);
 }
 
+function renderMarkdownPreservingMath(source) {
+  const math = [];
+
+  function stash(value) {
+    const token = "MATHPLACEHOLDER" + math.length + "END";
+    math.push(value);
+    return token;
+  }
+
+  let protectedSource = source
+    .replace(/\$\$[\s\S]*?\$\$/g, stash)
+    .replace(/\\\[[\s\S]*?\\\]/g, stash)
+    .replace(/\\\([\s\S]*?\\\)/g, stash);
+
+  let html = marked.parse(protectedSource, { gfm: true, breaks: false });
+
+  math.forEach(function(value, index) {
+    const token = "MATHPLACEHOLDER" + index + "END";
+    html = html.split(token).join(value);
+  });
+
+  return html;
+}
+
 async function typesetMathSoon() {
   for (let i = 0; i < 20; i += 1) {
     if (window.MathJax && window.MathJax.typesetPromise) {
