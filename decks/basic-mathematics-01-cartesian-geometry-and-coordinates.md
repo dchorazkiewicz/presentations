@@ -73,24 +73,33 @@ The coordinate system is not drawn “all at once”. It is **constructed** from
 
 # 4. From a unit segment to a numerical scale
 
-A unit is a **geometric length** that we decide to call \(1\).
+Start with one geometric interval and declare its length to be (1).
 
-Repeated transfer produces integers:
+<div class="interactive-panel bisection-panel" data-bisection-scale>
+  <div class="interactive-toolbar">
+    <div>
+      <strong>Repeated bisection of ([0,1])</strong>
+      <span class="interactive-status" data-bisection-status aria-live="polite">Start with the unit interval.</span>
+    </div>
+  </div>
 
-$$
-0,\;1,\;2,\;3,\ldots
-$$
+  <svg class="bisection-svg" viewBox="0 0 1000 370" role="img" aria-label="Successive bisection of the unit interval" data-bisection-svg></svg>
 
-Repeated bisection produces finer marks:
+  <div class="bisection-readout">
+    <span>level <strong data-bisection-level>0</strong></span>
+    <span>intervals <strong data-bisection-intervals>1</strong></span>
+    <span>spacing <strong data-bisection-spacing>1</strong></span>
+  </div>
 
-$$
-\frac12,\qquad
-\frac14,\qquad
-\frac34,\qquad
-\frac18,\ldots
-$$
+  <div class="interactive-controls">
+    <button class="interactive-button" type="button" data-bisection-previous>Previous</button>
+    <button class="interactive-button" type="button" data-bisection-next>Next</button>
+    <button class="interactive-button" type="button" data-bisection-play>Play</button>
+    <button class="interactive-button" type="button" data-bisection-reset>Reset</button>
+  </div>
+</div>
 
-> The numerical line is built by attaching numbers to geometric positions.
+> Each step bisects every existing interval. The marks become denser, while the geometric segment itself does not change.
 
 ---
 
