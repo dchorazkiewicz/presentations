@@ -470,7 +470,113 @@
     render();
   }
 
+  const fullscreenPanels = new Set();
+
+  function refreshAfterPanelResize() {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => refresh());
+    });
+  }
+
+  function isPanelFocused(panel) {
+    return document.fullscreenElement === panel || panel.classList.contains("panel-focus-fallback");
+  }
+
+  async function closePanelFocus(panel) {
+    if (document.fullscreenElement === panel) {
+      try {
+        await document.exitFullscreen();
+      } catch (_) {}
+    }
+
+    if (panel.classList.contains("panel-focus-fallback")) {
+      panel.classList.remove("panel-focus-fallback");
+      document.body.classList.remove("panel-focus-active");
+      refreshAfterPanelResize();
+    }
+  }
+
+  async function openPanelFocus(panel) {
+    if (isPanelFocused(panel)) {
+      await closePanelFocus(panel);
+      return;
+    }
+
+    if (panel.requestFullscreen) {
+      try {
+        await panel.requestFullscreen();
+        return;
+      } catch (_) {}
+    }
+
+    panel.classList.add("panel-focus-fallback");
+    document.body.classList.add("panel-focus-active");
+    refreshAfterPanelResize();
+  }
+
+  function updatePanelFullscreenButtons() {
+    fullscreenPanels.forEach(panel => {
+      const button = panel.querySelector("[data-panel-fullscreen]");
+      if (!button) return;
+
+      const focused = isPanelFocused(panel);
+      button.textContent = focused ? "Exit full screen" : "Full screen";
+      button.setAttribute("aria-label", focused ? "Exit animation full screen" : "Open animation full screen");
+      button.setAttribute("aria-pressed", focused ? "true" : "false");
+    });
+
+    refreshAfterPanelResize();
+  }
+
+  function initPanelFullscreen(panel) {
+    if (!panel || panel.dataset.fullscreenReady === "1") return;
+    panel.dataset.fullscreenReady = "1";
+    fullscreenPanels.add(panel);
+
+    let toolbar = panel.querySelector(":scope > .interactive-toolbar");
+    if (!toolbar) {
+      toolbar = document.createElement("div");
+      toolbar.className = "interactive-toolbar interactive-toolbar-generated";
+      panel.prepend(toolbar);
+    }
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "interactive-button panel-fullscreen-button";
+    button.dataset.panelFullscreen = "1";
+    button.textContent = "Full screen";
+    button.setAttribute("aria-label", "Open animation full screen");
+    button.setAttribute("aria-pressed", "false");
+
+    toolbar.appendChild(button);
+
+    button.addEventListener("click", async event => {
+      event.stopPropagation();
+      await openPanelFocus(panel);
+      updatePanelFullscreenButtons();
+    });
+  }
+
+  if (!window.__presentationPanelFullscreenBound) {
+    window.__presentationPanelFullscreenBound = true;
+
+    document.addEventListener("fullscreenchange", updatePanelFullscreenButtons);
+
+    document.addEventListener("keydown", event => {
+      if (event.key !== "Escape") return;
+
+      fullscreenPanels.forEach(panel => {
+        if (panel.classList.contains("panel-focus-fallback")) {
+          panel.classList.remove("panel-focus-fallback");
+        }
+      });
+      document.body.classList.remove("panel-focus-active");
+      updatePanelFullscreenButtons();
+    });
+  }
+
   function init(root) {
+    root.querySelectorAll(".interactive-panel").forEach(initPanelFullscreen);
     root.querySelectorAll("[data-cartesian-construction]").forEach(initCartesianConstruction);
     root.querySelectorAll("[data-coordinate-shift]").forEach(initCoordinateShift);
     root.querySelectorAll("[data-distance-geometry]").forEach(initDistanceGeometry);
