@@ -614,3 +614,135 @@ body { min-height: 100vh; }
   .reveal h1 { font-size: 1.85em; }
   .reveal h2 { font-size: 1.35em; }
 }
+
+
+/* Responsive presentation geometry */
+.reveal {
+  font-size: 30px;
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal .slides section {
+  box-sizing: border-box;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 52px 68px 34px !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.22) transparent;
+}
+
+.reveal .slides section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.reveal .slides section::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.20);
+  border-radius: 999px;
+}
+
+.reveal h1 {
+  font-size: 1.82em;
+  line-height: 1.06;
+  margin: 0 0 .34em;
+}
+
+.reveal h2 {
+  font-size: 1.34em;
+  line-height: 1.1;
+  margin: 0 0 .32em;
+}
+
+.reveal h3 {
+  font-size: 1.08em;
+  line-height: 1.15;
+  margin: 0 0 .3em;
+}
+
+.reveal p {
+  margin: .42em 0;
+  line-height: 1.34;
+}
+
+.reveal ol,
+.reveal ul {
+  margin-top: .32em;
+  margin-bottom: .4em;
+}
+
+.reveal li {
+  margin: .12em 0;
+  line-height: 1.3;
+}
+
+.reveal blockquote {
+  margin: .55em 0;
+}
+
+.reveal .formula-box {
+  padding: .42em .65em;
+  margin: .45em 0;
+}
+
+.reveal mjx-container[display="true"] {
+  margin: .48em 0 !important;
+}
+
+.presentation-board,
+.geometry-svg {
+  height: 300px;
+}
+
+.distance-board {
+  height: 280px;
+}
+
+@media (max-aspect-ratio: 4/5), (max-width: 800px) {
+  .reveal {
+    font-size: 27px;
+  }
+
+  .reveal .slides section {
+    padding: 82px 34px 34px !important;
+  }
+
+  .reveal h1 {
+    font-size: 1.66em;
+  }
+
+  .reveal h2 {
+    font-size: 1.28em;
+  }
+
+  .presentation-board,
+  .geometry-svg {
+    height: 330px;
+  }
+
+  .distance-board {
+    height: 305px;
+  }
+}
+
+@media (max-height: 650px) and (min-aspect-ratio: 1/1) {
+  .reveal {
+    font-size: 26px;
+  }
+
+  .reveal .slides section {
+    padding-top: 44px !important;
+    padding-bottom: 22px !important;
+  }
+
+  .presentation-board,
+  .geometry-svg {
+    height: 245px;
+  }
+
+  .distance-board {
+    height: 230px;
+  }
+}
