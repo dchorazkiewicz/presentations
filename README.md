@@ -38,3 +38,22 @@ The presentation sequence should remain broadly consistent with the course struc
 GitHub Pages is configured to deploy the viewer through GitHub Actions.
 
 The viewer should only need a new deployment when files in `viewer/` or the Pages workflow change. Presentation-content edits in `decks/` are intended to become visible after commit and refresh, without rebuilding the viewer.
+
+
+## Interactive simulation architecture
+
+Interactive figures are treated as reusable components rather than slide-specific hacks.
+
+The design rules are:
+
+- Every simulation lives inside an `.interactive-panel`.
+- The same panel must work both embedded in a slide and in a dedicated full-screen interaction stage.
+- Full-screen mode must **move the existing DOM node**, not clone or rebuild it. This preserves simulation state, event listeners, sliders, timers, and dragged points.
+- The full-screen interaction stage lives at the top level of the document, outside Reveal.js. This avoids coordinate-system errors caused by Reveal's CSS transforms.
+- Canvas/SVG/JSXGraph components must expose or support a resize step after their container changes size.
+- JSXGraph boards are resized through `board.updateContainerDims()` after entering or leaving the interaction stage.
+- Simulation logic must not depend on a fixed screen resolution.
+- Reveal navigation input is temporarily disabled while the interaction stage is active, so gestures and keys belong to the simulation.
+- Pressing the panel's `Full screen` button enters the interaction stage; `Exit full screen` or Escape returns the same live component to its original place in the slide.
+
+This component contract should be used for future mathematics and physics simulations so that text, MathJax notation, and interactive models can coexist without each presentation requiring custom fullscreen code.
