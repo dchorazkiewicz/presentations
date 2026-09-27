@@ -15,27 +15,13 @@ Points, lines, circles, intersections, perpendicularity and length have geometri
 
 <div class="interactive-panel" data-geometry-toggle>
   <div class="interactive-toolbar">
-    <strong>Same geometry, optional coordinates</strong>
+    <div>
+      <strong>Euclidean constructions before coordinates</strong>
+      <span class="interactive-status">Drag A, B and C. The constructions follow the points.</span>
+    </div>
     <button class="interactive-button" type="button" data-geometry-toggle-button>Show coordinate system</button>
   </div>
-  <svg class="geometry-svg" viewBox="0 0 800 420" role="img" aria-label="A Euclidean geometric scene with optional coordinate axes">
-    <g data-geometry-axes class="geometry-axes">
-      <line x1="80" y1="230" x2="740" y2="230" class="cg-axis"/>
-      <line x1="360" y1="370" x2="360" y2="50" class="cg-axis"/>
-      <g class="geometry-grid">
-        <line x1="160" y1="50" x2="160" y2="370"/><line x1="240" y1="50" x2="240" y2="370"/>
-        <line x1="440" y1="50" x2="440" y2="370"/><line x1="520" y1="50" x2="520" y2="370"/>
-        <line x1="600" y1="50" x2="600" y2="370"/><line x1="680" y1="50" x2="680" y2="370"/>
-        <line x1="80" y1="150" x2="740" y2="150"/><line x1="80" y1="310" x2="740" y2="310"/>
-      </g>
-    </g>
-    <circle cx="250" cy="160" r="88" class="geo-circle"/>
-    <line x1="110" y1="330" x2="690" y2="90" class="geo-line"/>
-    <line x1="495" y1="45" x2="495" y2="355" class="geo-perp"/>
-    <circle cx="250" cy="160" r="8" class="geo-point"/><text x="266" y="150" class="cg-label">A</text>
-    <circle cx="520" cy="160" r="8" class="geo-point"/><text x="536" y="150" class="cg-label">B</text>
-    <circle cx="495" cy="171" r="8" class="geo-point"/><text x="510" y="193" class="cg-label">C</text>
-  </svg>
+  <div class="jxgbox presentation-board" data-euclidean-board aria-label="Interactive Euclidean construction with draggable points"></div>
 </div>
 
 **Removing the coordinate system does not remove the geometry.**
