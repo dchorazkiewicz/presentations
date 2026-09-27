@@ -456,18 +456,152 @@
   }
 
   function initGeometryToggle(panel) {
-    if (!panel || panel.dataset.ready === "1") return;
+    if (!panel || panel.dataset.ready === "1" || !window.JXG) return;
     panel.dataset.ready = "1";
+
+    const host = panel.querySelector("[data-euclidean-board]");
     const button = panel.querySelector("[data-geometry-toggle-button]");
-    const axes = panel.querySelector("[data-geometry-axes]");
-    if (!button || !axes) return;
-    let visible = false;
-    function render() {
-      axes.style.opacity = visible ? "1" : "0";
-      button.textContent = visible ? "Hide coordinate system" : "Show coordinate system";
+    if (!host || !button) return;
+
+    if (!host.id) host.id = "euclidean-board-" + Math.random().toString(36).slice(2);
+
+    const board = JXG.JSXGraph.initBoard(host.id, {
+      boundingbox: [-5.2, 3.4, 5.2, -3.4],
+      axis: false,
+      grid: false,
+      showNavigation: false,
+      showCopyright: false,
+      keepAspectRatio: true,
+      pan: { enabled: false },
+      zoom: { enabled: false }
+    });
+    boardEntries.push({ board, panel, host });
+
+    const colors = {
+      ink: "#e8eef7",
+      blue: "#7dd3fc",
+      gold: "#fbbf24",
+      green: "#4ade80",
+      helper: "#94a3b8",
+      axis: "#64748b",
+      grid: "#263247"
+    };
+
+    const pointStyle = {
+      size: 5,
+      strokeWidth: 2,
+      label: { fontSize: 18, offset: [10, 10], color: colors.ink }
+    };
+
+    const A = board.create("point", [-3.4, -1.3], {
+      name: "A",
+      fillColor: colors.gold,
+      strokeColor: colors.gold,
+      ...pointStyle
+    });
+
+    const B = board.create("point", [1.9, 1.1], {
+      name: "B",
+      fillColor: colors.gold,
+      strokeColor: colors.gold,
+      ...pointStyle
+    });
+
+    const C = board.create("point", [2.4, -1.1], {
+      name: "C",
+      fillColor: colors.green,
+      strokeColor: colors.green,
+      ...pointStyle
+    });
+
+    const baseLine = board.create("line", [A, B], {
+      strokeColor: colors.blue,
+      strokeWidth: 3,
+      highlight: false
+    });
+
+    board.create("circle", [A, B], {
+      strokeColor: colors.gold,
+      strokeWidth: 3,
+      fillOpacity: 0,
+      highlight: false
+    });
+
+    const perpendicular = board.create("perpendicular", [baseLine, C], {
+      strokeColor: colors.green,
+      strokeWidth: 3,
+      highlight: false
+    });
+
+    board.create("intersection", [perpendicular, baseLine, 0], {
+      name: "D",
+      size: 4,
+      fillColor: colors.ink,
+      strokeColor: colors.ink,
+      label: { fontSize: 17, offset: [10, -20], color: colors.ink },
+      fixed: true,
+      highlight: false
+    });
+
+    board.create("text", [-4.9, 2.9, "Drag A, B and C"], {
+      color: colors.helper,
+      fontSize: 16,
+      fixed: true,
+      highlight: false
+    });
+
+    const coordinateObjects = [];
+
+    for (let x = -5; x <= 5; x += 1) {
+      coordinateObjects.push(board.create("segment", [[x, -3.2], [x, 3.2]], {
+        strokeColor: colors.grid,
+        strokeWidth: 1,
+        fixed: true,
+        highlight: false,
+        visible: false
+      }));
     }
-    button.addEventListener("click", () => { visible = !visible; render(); });
-    render();
+
+    for (let y = -3; y <= 3; y += 1) {
+      coordinateObjects.push(board.create("segment", [[-5, y], [5, y]], {
+        strokeColor: colors.grid,
+        strokeWidth: 1,
+        fixed: true,
+        highlight: false,
+        visible: false
+      }));
+    }
+
+    coordinateObjects.push(board.create("line", [[-5, 0], [5, 0]], {
+      strokeColor: colors.axis,
+      strokeWidth: 2,
+      fixed: true,
+      highlight: false,
+      visible: false
+    }));
+
+    coordinateObjects.push(board.create("line", [[0, -3], [0, 3]], {
+      strokeColor: colors.axis,
+      strokeWidth: 2,
+      fixed: true,
+      highlight: false,
+      visible: false
+    }));
+
+    let coordinatesVisible = false;
+
+    function renderCoordinateSystem() {
+      coordinateObjects.forEach(object => object.setAttribute({ visible: coordinatesVisible }));
+      button.textContent = coordinatesVisible ? "Hide coordinate system" : "Show coordinate system";
+      board.fullUpdate();
+    }
+
+    button.addEventListener("click", () => {
+      coordinatesVisible = !coordinatesVisible;
+      renderCoordinateSystem();
+    });
+
+    renderCoordinateSystem();
   }
 
   const panelHomes = new Map();
