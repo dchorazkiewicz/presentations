@@ -746,3 +746,115 @@ body { min-height: 100vh; }
     height: 230px;
   }
 }
+
+
+/* Per-animation full-screen mode */
+.interactive-toolbar-generated {
+  justify-content: flex-end;
+}
+
+.panel-fullscreen-button {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.interactive-panel:fullscreen,
+.interactive-panel.panel-focus-fallback {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 22px;
+  border: 0;
+  border-radius: 0;
+  background: #090d18;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.interactive-panel:fullscreen {
+  width: 100vw;
+  height: 100vh;
+}
+
+.interactive-panel.panel-focus-fallback {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  width: 100vw;
+  height: 100vh;
+}
+
+body.panel-focus-active {
+  overflow: hidden;
+}
+
+.interactive-panel:fullscreen .interactive-toolbar,
+.interactive-panel.panel-focus-fallback .interactive-toolbar {
+  flex: 0 0 auto;
+  margin-bottom: 14px;
+  font-size: 16px;
+}
+
+.interactive-panel:fullscreen .presentation-board,
+.interactive-panel.panel-focus-fallback .presentation-board,
+.interactive-panel:fullscreen .geometry-svg,
+.interactive-panel.panel-focus-fallback .geometry-svg {
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto !important;
+  min-height: 0;
+  border-radius: 12px;
+}
+
+.interactive-panel:fullscreen .distance-readout,
+.interactive-panel.panel-focus-fallback .distance-readout,
+.interactive-panel:fullscreen .interactive-controls,
+.interactive-panel.panel-focus-fallback .interactive-controls,
+.interactive-panel:fullscreen .slider-grid,
+.interactive-panel.panel-focus-fallback .slider-grid,
+.interactive-panel:fullscreen .single-slider,
+.interactive-panel.panel-focus-fallback .single-slider,
+.interactive-panel:fullscreen .coordinate-readout,
+.interactive-panel.panel-focus-fallback .coordinate-readout {
+  flex: 0 0 auto;
+}
+
+.interactive-panel:fullscreen .distance-readout,
+.interactive-panel.panel-focus-fallback .distance-readout {
+  font-size: 16px;
+}
+
+.interactive-panel:fullscreen .coordinate-readout,
+.interactive-panel.panel-focus-fallback .coordinate-readout {
+  font-size: 18px;
+}
+
+.interactive-panel:fullscreen .slider-grid label,
+.interactive-panel.panel-focus-fallback .slider-grid label,
+.interactive-panel:fullscreen .single-slider,
+.interactive-panel.panel-focus-fallback .single-slider {
+  font-size: 15px;
+}
+
+@media (max-width: 700px) {
+  .interactive-panel:fullscreen,
+  .interactive-panel.panel-focus-fallback {
+    padding: 12px;
+  }
+
+  .interactive-panel:fullscreen .interactive-toolbar,
+  .interactive-panel.panel-focus-fallback .interactive-toolbar {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .interactive-panel:fullscreen .slider-grid,
+  .interactive-panel.panel-focus-fallback .slider-grid {
+    grid-template-columns: 1fr;
+  }
+}
