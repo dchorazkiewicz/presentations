@@ -748,7 +748,11 @@ body { min-height: 100vh; }
 }
 
 
-/* Per-animation full-screen mode */
+
+
+/* Interactive stage
+   The simulation is physically moved out of Reveal's transformed slide tree.
+   The same DOM node is used, so state and event listeners are preserved. */
 .interactive-toolbar-generated {
   justify-content: flex-end;
 }
@@ -758,103 +762,105 @@ body { min-height: 100vh; }
   white-space: nowrap;
 }
 
-.interactive-panel:fullscreen,
-.interactive-panel.panel-focus-fallback {
+.interactive-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
   box-sizing: border-box;
-  margin: 0;
-  padding: 22px;
-  border: 0;
-  border-radius: 0;
+  padding: 16px;
   background: #090d18;
   color: var(--text);
-  display: flex;
-  flex-direction: column;
+}
+
+.interactive-stage:fullscreen {
+  background: #090d18;
+}
+
+.interactive-stage-content {
   width: 100%;
   height: 100%;
   min-width: 0;
   min-height: 0;
-  overflow: auto;
+  display: flex;
 }
 
-.interactive-panel:fullscreen {
-  width: 100vw;
-  height: 100vh;
-}
-
-.interactive-panel.panel-focus-fallback {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  width: 100vw;
-  height: 100vh;
-}
-
-body.panel-focus-active {
+body.interactive-stage-open {
   overflow: hidden;
 }
 
-.interactive-panel:fullscreen .interactive-toolbar,
-.interactive-panel.panel-focus-fallback .interactive-toolbar {
+body.interactive-stage-open .reveal,
+body.interactive-stage-open .deck-toolbar {
+  pointer-events: none;
+}
+
+.interactive-stage .interactive-panel {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 18px;
+  border: 0;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #090d18;
+}
+
+.interactive-stage .interactive-toolbar {
   flex: 0 0 auto;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   font-size: 16px;
 }
 
-.interactive-panel:fullscreen .presentation-board,
-.interactive-panel.panel-focus-fallback .presentation-board,
-.interactive-panel:fullscreen .geometry-svg,
-.interactive-panel.panel-focus-fallback .geometry-svg {
+.interactive-stage .presentation-board,
+.interactive-stage .geometry-svg {
   flex: 1 1 auto;
   width: 100%;
   height: auto !important;
+  min-width: 0;
   min-height: 0;
   border-radius: 12px;
 }
 
-.interactive-panel:fullscreen .distance-readout,
-.interactive-panel.panel-focus-fallback .distance-readout,
-.interactive-panel:fullscreen .interactive-controls,
-.interactive-panel.panel-focus-fallback .interactive-controls,
-.interactive-panel:fullscreen .slider-grid,
-.interactive-panel.panel-focus-fallback .slider-grid,
-.interactive-panel:fullscreen .single-slider,
-.interactive-panel.panel-focus-fallback .single-slider,
-.interactive-panel:fullscreen .coordinate-readout,
-.interactive-panel.panel-focus-fallback .coordinate-readout {
+.interactive-stage .interactive-controls,
+.interactive-stage .slider-grid,
+.interactive-stage .single-slider,
+.interactive-stage .coordinate-readout,
+.interactive-stage .distance-readout {
   flex: 0 0 auto;
 }
 
-.interactive-panel:fullscreen .distance-readout,
-.interactive-panel.panel-focus-fallback .distance-readout {
+.interactive-stage .distance-readout {
   font-size: 16px;
 }
 
-.interactive-panel:fullscreen .coordinate-readout,
-.interactive-panel.panel-focus-fallback .coordinate-readout {
+.interactive-stage .coordinate-readout {
   font-size: 18px;
 }
 
-.interactive-panel:fullscreen .slider-grid label,
-.interactive-panel.panel-focus-fallback .slider-grid label,
-.interactive-panel:fullscreen .single-slider,
-.interactive-panel.panel-focus-fallback .single-slider {
+.interactive-stage .slider-grid label,
+.interactive-stage .single-slider {
   font-size: 15px;
 }
 
 @media (max-width: 700px) {
-  .interactive-panel:fullscreen,
-  .interactive-panel.panel-focus-fallback {
-    padding: 12px;
+  .interactive-stage {
+    padding: 8px;
   }
 
-  .interactive-panel:fullscreen .interactive-toolbar,
-  .interactive-panel.panel-focus-fallback .interactive-toolbar {
+  .interactive-stage .interactive-panel {
+    padding: 10px;
+  }
+
+  .interactive-stage .interactive-toolbar {
     gap: 8px;
     flex-wrap: wrap;
   }
 
-  .interactive-panel:fullscreen .slider-grid,
-  .interactive-panel.panel-focus-fallback .slider-grid {
+  .interactive-stage .slider-grid {
     grid-template-columns: 1fr;
   }
 }
