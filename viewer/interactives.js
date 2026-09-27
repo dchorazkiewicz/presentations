@@ -304,6 +304,177 @@
     render();
   }
 
+  function initBisectionScale(panel) {
+    if (!panel || panel.dataset.ready === "1") return;
+    panel.dataset.ready = "1";
+
+    const svg = panel.querySelector("[data-bisection-svg]");
+    const status = panel.querySelector("[data-bisection-status]");
+    const levelReadout = panel.querySelector("[data-bisection-level]");
+    const intervalsReadout = panel.querySelector("[data-bisection-intervals]");
+    const spacingReadout = panel.querySelector("[data-bisection-spacing]");
+    const previous = panel.querySelector("[data-bisection-previous]");
+    const next = panel.querySelector("[data-bisection-next]");
+    const play = panel.querySelector("[data-bisection-play]");
+    const reset = panel.querySelector("[data-bisection-reset]");
+
+    if (!svg || !status || !previous || !next || !play || !reset) return;
+
+    const MAX_LEVEL = 4;
+    const X0 = 105;
+    const X1 = 930;
+    const ROW0 = 58;
+    const ROW_GAP = 68;
+
+    let current = 0;
+    let timer = null;
+
+    function gcd(a, b) {
+      let x = Math.abs(a);
+      let y = Math.abs(b);
+      while (y) {
+        const t = y;
+        y = x % y;
+        x = t;
+      }
+      return x || 1;
+    }
+
+    function fractionLabel(k, denominator) {
+      if (k === 0) return "0";
+      if (k === denominator) return "1";
+
+      const divisor = gcd(k, denominator);
+      const numerator = k / divisor;
+      const reducedDenominator = denominator / divisor;
+
+      if (reducedDenominator === 1) return String(numerator);
+      return numerator + "/" + reducedDenominator;
+    }
+
+    function newFractionsForLevel(level) {
+      if (level === 0) return [];
+      const denominator = 2 ** level;
+      const values = [];
+      for (let k = 1; k < denominator; k += 2) {
+        values.push(fractionLabel(k, denominator));
+      }
+      return values;
+    }
+
+    function describe(level) {
+      if (level === 0) return "Start with the unit interval [0,1].";
+      if (level === 1) return "Bisect the interval once: the midpoint 1/2 appears.";
+      if (level === 2) return "Bisect both halves: 1/4 and 3/4 appear.";
+      if (level === 3) return "Bisect all four intervals: the eighth marks appear.";
+      return "Bisect again: sixteen equal intervals now fill the same unit segment.";
+    }
+
+    function renderRow(level, active) {
+      const denominator = 2 ** level;
+      const y = ROW0 + level * ROW_GAP;
+      const opacity = active ? 1 : 0.42;
+      let markup = "";
+
+      markup += '<g class="bisection-row' + (active ? ' is-active' : '') + '" opacity="' + opacity + '">';
+      markup += '<text x="28" y="' + (y + 5) + '" class="bs-level-label">L' + level + '</text>';
+      markup += '<line x1="' + X0 + '" y1="' + y + '" x2="' + X1 + '" y2="' + y + '" class="bs-baseline"/>';
+
+      for (let k = 0; k <= denominator; k++) {
+        const x = X0 + (X1 - X0) * (k / denominator);
+        const isEndpoint = k === 0 || k === denominator;
+        const isNew = level > 0 && k % 2 === 1;
+        const tickHeight = isEndpoint ? 22 : (isNew ? 27 : 15);
+        const tickClass = isNew ? "bs-tick bs-new" : "bs-tick";
+
+        markup += '<line x1="' + x + '" y1="' + (y - tickHeight) + '" x2="' + x + '" y2="' + (y + tickHeight) + '" class="' + tickClass + '"/>';
+
+        const shouldLabel = level === 0 ? isEndpoint : (isNew || isEndpoint);
+        if (shouldLabel) {
+          const label = fractionLabel(k, denominator);
+          markup += '<text x="' + x + '" y="' + (y + 48) + '" text-anchor="middle" class="' + (isNew ? 'bs-fraction bs-new-label' : 'bs-fraction') + '">' + label + '</text>';
+        }
+
+        if (isNew) {
+          markup += '<circle cx="' + x + '" cy="' + y + '" r="6" class="bs-midpoint bs-new"/>';
+        }
+      }
+
+      markup += '</g>';
+      return markup;
+    }
+
+    function render() {
+      let markup = "";
+
+      for (let level = 0; level <= current; level++) {
+        markup += renderRow(level, level === current);
+      }
+
+      svg.innerHTML = markup;
+
+      const intervals = 2 ** current;
+      const spacing = current === 0 ? "1" : "1/" + intervals;
+
+      status.textContent = describe(current);
+      if (levelReadout) levelReadout.textContent = String(current);
+      if (intervalsReadout) intervalsReadout.textContent = String(intervals);
+      if (spacingReadout) spacingReadout.textContent = spacing;
+
+      previous.disabled = current === 0;
+      next.disabled = current === MAX_LEVEL;
+
+      const newest = newFractionsForLevel(current);
+      panel.dataset.newFractions = newest.join(", ");
+    }
+
+    function stop() {
+      if (timer) clearInterval(timer);
+      timer = null;
+      play.textContent = "Play";
+    }
+
+    function advance() {
+      if (current < MAX_LEVEL) {
+        current += 1;
+        render();
+      } else {
+        stop();
+      }
+    }
+
+    previous.addEventListener("click", () => {
+      stop();
+      current = Math.max(0, current - 1);
+      render();
+    });
+
+    next.addEventListener("click", () => {
+      stop();
+      advance();
+    });
+
+    reset.addEventListener("click", () => {
+      stop();
+      current = 0;
+      render();
+    });
+
+    play.addEventListener("click", () => {
+      if (timer) {
+        stop();
+        return;
+      }
+
+      if (current === MAX_LEVEL) current = 0;
+      render();
+      play.textContent = "Pause";
+      timer = setInterval(advance, 1500);
+    });
+
+    render();
+  }
+
   function initCoordinateShift(panel) {
     if (!panel || panel.dataset.ready === "1") return;
     panel.dataset.ready = "1";
@@ -823,6 +994,7 @@
   function init(root) {
     root.querySelectorAll(".interactive-panel").forEach(initPanelFullscreen);
     root.querySelectorAll("[data-cartesian-construction]").forEach(initCartesianConstruction);
+    root.querySelectorAll("[data-bisection-scale]").forEach(initBisectionScale);
     root.querySelectorAll("[data-coordinate-shift]").forEach(initCoordinateShift);
     root.querySelectorAll("[data-distance-geometry]").forEach(initDistanceGeometry);
     root.querySelectorAll("[data-function-generator]").forEach(initFunctionGenerator);
