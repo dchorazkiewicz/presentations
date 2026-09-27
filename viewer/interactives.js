@@ -1,5 +1,5 @@
 (() => {
-  const boards = [];
+  const boardEntries = [];
 
   function initCartesianConstruction(panel) {
     if (!panel || panel.dataset.ready === "1" || !window.JXG) return;
@@ -22,7 +22,7 @@
       pan: { enabled: false },
       zoom: { enabled: false }
     });
-    boards.push(board);
+    boardEntries.push({ board, panel, host });
 
     const colors = {
       ink: "#e8eef7",
@@ -377,7 +377,7 @@
         y: { strokeColor: "#64748b", ticks: { label: { color: "#94a3b8" } } }
       }
     });
-    boards.push(board);
+    boardEntries.push({ board, panel, host });
 
     const fixed = { fixed: true, highlight: false };
     const P = board.create("point", [1, 1], {
@@ -470,68 +470,168 @@
     render();
   }
 
-  const fullscreenPanels = new Set();
+  const panelHomes = new Map();
+  let activePanel = null;
+  let revealInputState = null;
+  let nativeStageFullscreen = false;
+  let closingStage = false;
 
-  function refreshAfterPanelResize() {
+  function getInteractiveStage() {
+    return {
+      stage: document.getElementById("interactive-stage"),
+      content: document.getElementById("interactive-stage-content")
+    };
+  }
+
+  function resizePanel(panel) {
+    boardEntries
+      .filter(entry => entry.panel === panel)
+      .forEach(entry => {
+        try {
+          entry.board.updateContainerDims();
+          entry.board.fullUpdate();
+        } catch (_) {}
+      });
+  }
+
+  function schedulePanelResize(panel) {
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => refresh());
+      requestAnimationFrame(() => resizePanel(panel));
     });
   }
 
-  function isPanelFocused(panel) {
-    return document.fullscreenElement === panel || panel.classList.contains("panel-focus-fallback");
+  function setPanelFullscreenButton(panel, expanded) {
+    const button = panel?.querySelector("[data-panel-fullscreen]");
+    if (!button) return;
+
+    button.textContent = expanded ? "Exit full screen" : "Full screen";
+    button.setAttribute("aria-label", expanded ? "Return animation to the slide" : "Open animation full screen");
+    button.setAttribute("aria-pressed", expanded ? "true" : "false");
   }
 
-  async function closePanelFocus(panel) {
-    if (document.fullscreenElement === panel) {
+  function suspendRevealInput() {
+    if (!window.Reveal || !Reveal.isReady() || revealInputState) return;
+
+    const config = Reveal.getConfig();
+    revealInputState = {
+      keyboard: config.keyboard,
+      touch: config.touch
+    };
+
+    Reveal.configure({
+      keyboard: false,
+      touch: false
+    });
+  }
+
+  function restoreRevealInput() {
+    if (!window.Reveal || !Reveal.isReady() || !revealInputState) return;
+
+    Reveal.configure({
+      keyboard: revealInputState.keyboard,
+      touch: revealInputState.touch
+    });
+
+    revealInputState = null;
+  }
+
+  function finalizeInteractiveStageClose() {
+    if (!activePanel) return;
+
+    const panel = activePanel;
+    const marker = panelHomes.get(panel);
+    const { stage, content } = getInteractiveStage();
+
+    if (marker?.parentNode) {
+      marker.parentNode.insertBefore(panel, marker);
+      marker.remove();
+    }
+
+    panelHomes.delete(panel);
+    panel.classList.remove("interactive-stage-panel");
+    setPanelFullscreenButton(panel, false);
+
+    activePanel = null;
+    nativeStageFullscreen = false;
+
+    if (content) content.replaceChildren();
+    if (stage) {
+      stage.hidden = true;
+      stage.setAttribute("aria-hidden", "true");
+    }
+
+    document.body.classList.remove("interactive-stage-open");
+    restoreRevealInput();
+
+    schedulePanelResize(panel);
+    setTimeout(() => {
+      try {
+        Reveal.layout();
+      } catch (_) {}
+    }, 0);
+  }
+
+  async function closeInteractiveStage() {
+    if (!activePanel) return;
+
+    const { stage } = getInteractiveStage();
+
+    if (document.fullscreenElement === stage) {
+      closingStage = true;
       try {
         await document.exitFullscreen();
       } catch (_) {}
+      closingStage = false;
     }
 
-    if (panel.classList.contains("panel-focus-fallback")) {
-      panel.classList.remove("panel-focus-fallback");
-      document.body.classList.remove("panel-focus-active");
-      refreshAfterPanelResize();
-    }
+    finalizeInteractiveStageClose();
   }
 
-  async function openPanelFocus(panel) {
-    if (isPanelFocused(panel)) {
-      await closePanelFocus(panel);
+  async function openInteractiveStage(panel) {
+    if (!panel) return;
+
+    if (activePanel === panel) {
+      await closeInteractiveStage();
       return;
     }
 
-    if (panel.requestFullscreen) {
-      try {
-        await panel.requestFullscreen();
-        return;
-      } catch (_) {}
+    if (activePanel) {
+      await closeInteractiveStage();
     }
 
-    panel.classList.add("panel-focus-fallback");
-    document.body.classList.add("panel-focus-active");
-    refreshAfterPanelResize();
-  }
+    const { stage, content } = getInteractiveStage();
+    if (!stage || !content) return;
 
-  function updatePanelFullscreenButtons() {
-    fullscreenPanels.forEach(panel => {
-      const button = panel.querySelector("[data-panel-fullscreen]");
-      if (!button) return;
+    const marker = document.createComment("interactive-panel-home");
+    panel.parentNode.insertBefore(marker, panel);
+    panelHomes.set(panel, marker);
 
-      const focused = isPanelFocused(panel);
-      button.textContent = focused ? "Exit full screen" : "Full screen";
-      button.setAttribute("aria-label", focused ? "Exit animation full screen" : "Open animation full screen");
-      button.setAttribute("aria-pressed", focused ? "true" : "false");
-    });
+    activePanel = panel;
+    panel.classList.add("interactive-stage-panel");
+    content.appendChild(panel);
 
-    refreshAfterPanelResize();
+    stage.hidden = false;
+    stage.setAttribute("aria-hidden", "false");
+    document.body.classList.add("interactive-stage-open");
+    setPanelFullscreenButton(panel, true);
+    suspendRevealInput();
+    schedulePanelResize(panel);
+
+    if (stage.requestFullscreen) {
+      try {
+        await stage.requestFullscreen();
+        nativeStageFullscreen = true;
+      } catch (_) {
+        nativeStageFullscreen = false;
+      }
+    }
+
+    schedulePanelResize(panel);
   }
 
   function initPanelFullscreen(panel) {
     if (!panel || panel.dataset.fullscreenReady === "1") return;
     panel.dataset.fullscreenReady = "1";
-    fullscreenPanels.add(panel);
 
     let toolbar = panel.querySelector(":scope > .interactive-toolbar");
     if (!toolbar) {
@@ -547,31 +647,42 @@
     button.textContent = "Full screen";
     button.setAttribute("aria-label", "Open animation full screen");
     button.setAttribute("aria-pressed", "false");
-
     toolbar.appendChild(button);
 
-    button.addEventListener("click", async event => {
+    button.addEventListener("click", event => {
       event.stopPropagation();
-      await openPanelFocus(panel);
-      updatePanelFullscreenButtons();
+      if (activePanel === panel) {
+        closeInteractiveStage();
+      } else {
+        openInteractiveStage(panel);
+      }
     });
   }
 
-  if (!window.__presentationPanelFullscreenBound) {
-    window.__presentationPanelFullscreenBound = true;
+  if (!window.__presentationInteractiveStageBound) {
+    window.__presentationInteractiveStageBound = true;
 
-    document.addEventListener("fullscreenchange", updatePanelFullscreenButtons);
+    document.addEventListener("fullscreenchange", () => {
+      if (
+        activePanel &&
+        nativeStageFullscreen &&
+        !document.fullscreenElement &&
+        !closingStage
+      ) {
+        finalizeInteractiveStageClose();
+      } else if (activePanel) {
+        schedulePanelResize(activePanel);
+      }
+    });
 
     document.addEventListener("keydown", event => {
-      if (event.key !== "Escape") return;
+      if (event.key === "Escape" && activePanel && !document.fullscreenElement) {
+        closeInteractiveStage();
+      }
+    });
 
-      fullscreenPanels.forEach(panel => {
-        if (panel.classList.contains("panel-focus-fallback")) {
-          panel.classList.remove("panel-focus-fallback");
-        }
-      });
-      document.body.classList.remove("panel-focus-active");
-      updatePanelFullscreenButtons();
+    window.addEventListener("resize", () => {
+      if (activePanel) schedulePanelResize(activePanel);
     });
   }
 
@@ -585,13 +696,14 @@
   }
 
   function refresh() {
-    boards.forEach(board => {
+    boardEntries.forEach(entry => {
       try {
-        board.resizeContainer();
-        board.fullUpdate();
+        entry.board.updateContainerDims();
+        entry.board.fullUpdate();
       } catch (_) {}
     });
   }
 
-  window.PresentationInteractives = { init, refresh };
+  window.PresentationInteractives = { init, refresh, resizePanel };
+
 })();
