@@ -219,6 +219,37 @@ async function typesetMathSoon() {
   }
 }
 
+function getRevealViewport() {
+  const width = window.innerWidth || document.documentElement.clientWidth || 1280;
+  const height = window.innerHeight || document.documentElement.clientHeight || 720;
+  const ratio = width / Math.max(height, 1);
+
+  if (ratio < 0.85) {
+    return { width: 760, height: 1200 };
+  }
+
+  if (ratio < 1.35) {
+    return { width: 1100, height: 900 };
+  }
+
+  if (ratio > 1.85) {
+    return { width: 1500, height: 800 };
+  }
+
+  return { width: 1440, height: 900 };
+}
+
+function applyRevealViewport() {
+  if (!window.Reveal || !Reveal.isReady()) return;
+  const viewport = getRevealViewport();
+  Reveal.configure({
+    width: viewport.width,
+    height: viewport.height
+  });
+  Reveal.layout();
+  window.PresentationInteractives?.refresh();
+}
+
 async function loadDeck(deckId) {
   if (!/^[a-zA-Z0-9._-]+$/.test(deckId)) {
     throw new Error("Invalid presentation name.");
@@ -245,6 +276,8 @@ async function loadDeck(deckId) {
 
   setLoading(true, "Starting presentation…");
 
+  const viewport = getRevealViewport();
+
   await withTimeout(Reveal.initialize({
     hash: true,
     history: true,
@@ -254,11 +287,11 @@ async function loadDeck(deckId) {
     center: false,
     transition: "fade",
     backgroundTransition: "fade",
-    width: 1280,
-    height: 720,
-    margin: 0.06,
+    width: viewport.width,
+    height: viewport.height,
+    margin: 0.035,
     minScale: 0.2,
-    maxScale: 2.0,
+    maxScale: 1.15,
     touch: true
   }), 8000, "Reveal.js did not finish initialization.");
 
@@ -294,6 +327,16 @@ document.addEventListener("fullscreenchange", function() {
 });
 
 refreshButton.addEventListener("click", loadCatalog);
+
+let resizeTimer = null;
+window.addEventListener("resize", function() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(applyRevealViewport, 120);
+});
+
+window.addEventListener("orientationchange", function() {
+  setTimeout(applyRevealViewport, 180);
+});
 
 (async function start() {
   const params = new URLSearchParams(window.location.search);
