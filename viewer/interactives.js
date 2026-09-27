@@ -320,11 +320,10 @@
 
     if (!svg || !status || !previous || !next || !play || !reset) return;
 
-    const MAX_LEVEL = 4;
-    const X0 = 105;
-    const X1 = 930;
-    const ROW0 = 58;
-    const ROW_GAP = 68;
+    const MAX_LEVEL = 5;
+    const X0 = 80;
+    const X1 = 920;
+    const Y = 120;
 
     let current = 0;
     let timer = null;
@@ -340,81 +339,106 @@
       return x || 1;
     }
 
-    function fractionLabel(k, denominator) {
-      if (k === 0) return "0";
-      if (k === denominator) return "1";
+    function reducedFraction(k, denominator) {
+      if (k === 0) return { numerator: 0, denominator: 1, label: "0" };
+      if (k === denominator) return { numerator: 1, denominator: 1, label: "1" };
 
       const divisor = gcd(k, denominator);
       const numerator = k / divisor;
       const reducedDenominator = denominator / divisor;
 
-      if (reducedDenominator === 1) return String(numerator);
-      return numerator + "/" + reducedDenominator;
+      return {
+        numerator,
+        denominator: reducedDenominator,
+        label: reducedDenominator === 1
+          ? String(numerator)
+          : numerator + "/" + reducedDenominator
+      };
     }
 
-    function newFractionsForLevel(level) {
-      if (level === 0) return [];
-      const denominator = 2 ** level;
-      const values = [];
-      for (let k = 1; k < denominator; k += 2) {
-        values.push(fractionLabel(k, denominator));
-      }
-      return values;
+    function birthLevel(k, denominator) {
+      if (k === 0 || k === denominator) return 0;
+      return Math.log2(reducedFraction(k, denominator).denominator);
     }
 
     function describe(level) {
-      if (level === 0) return "Start with the unit interval [0,1].";
-      if (level === 1) return "Bisect the interval once: the midpoint 1/2 appears.";
-      if (level === 2) return "Bisect both halves: 1/4 and 3/4 appear.";
-      if (level === 3) return "Bisect all four intervals: the eighth marks appear.";
-      return "Bisect again: sixteen equal intervals now fill the same unit segment.";
+      if (level === 0) return "Start with one unit interval [0,1].";
+      if (level === 1) return "Insert the midpoint: 1/2.";
+      if (level === 2) return "Bisect both intervals: 1/4 and 3/4 appear.";
+      if (level === 3) return "Bisect again: the eighth marks fill the same line.";
+      if (level === 4) return "The same interval now contains sixteen equal subintervals.";
+      return "Continue the same process: thirty-two equal subintervals on one unchanged unit segment.";
     }
 
-    function renderRow(level, active) {
-      const denominator = 2 ** level;
-      const y = ROW0 + level * ROW_GAP;
-      const opacity = active ? 1 : 0.42;
-      let markup = "";
+    function labelY(k, level, isNew) {
+      if (level <= 3) return Y + 56;
 
-      markup += '<g class="bisection-row' + (active ? ' is-active' : '') + '" opacity="' + opacity + '">';
-      markup += '<text x="28" y="' + (y + 5) + '" class="bs-level-label">L' + level + '</text>';
-      markup += '<line x1="' + X0 + '" y1="' + y + '" x2="' + X1 + '" y2="' + y + '" class="bs-baseline"/>';
-
-      for (let k = 0; k <= denominator; k++) {
-        const x = X0 + (X1 - X0) * (k / denominator);
-        const isEndpoint = k === 0 || k === denominator;
-        const isNew = level > 0 && k % 2 === 1;
-        const tickHeight = isEndpoint ? 22 : (isNew ? 27 : 15);
-        const tickClass = isNew ? "bs-tick bs-new" : "bs-tick";
-
-        markup += '<line x1="' + x + '" y1="' + (y - tickHeight) + '" x2="' + x + '" y2="' + (y + tickHeight) + '" class="' + tickClass + '"/>';
-
-        const shouldLabel = level === 0 ? isEndpoint : (isNew || isEndpoint);
-        if (shouldLabel) {
-          const label = fractionLabel(k, denominator);
-          markup += '<text x="' + x + '" y="' + (y + 48) + '" text-anchor="middle" class="' + (isNew ? 'bs-fraction bs-new-label' : 'bs-fraction') + '">' + label + '</text>';
-        }
-
-        if (isNew) {
-          markup += '<circle cx="' + x + '" cy="' + y + '" r="6" class="bs-midpoint bs-new"/>';
-        }
+      if (isNew) {
+        return k % 4 === 1 ? Y - 42 : Y + 58;
       }
 
-      markup += '</g>';
-      return markup;
+      return Y + 56;
+    }
+
+    function shouldLabel(k, denominator, level, birth) {
+      if (k === 0 || k === denominator) return true;
+      if (level <= 3) return true;
+
+      if (birth === level) return true;
+
+      const reduced = reducedFraction(k, denominator);
+      return reduced.denominator <= 4;
     }
 
     function render() {
+      const denominator = 2 ** current;
       let markup = "";
 
-      for (let level = 0; level <= current; level++) {
-        markup += renderRow(level, level === current);
+      markup += '<line x1="' + X0 + '" y1="' + Y + '" x2="' + X1 + '" y2="' + Y + '" class="bs-baseline"/>';
+      markup += '<path d="M ' + X0 + ' ' + (Y - 8) + ' L ' + X0 + ' ' + (Y + 8) + ' M ' + X1 + ' ' + (Y - 8) + ' L ' + X1 + ' ' + (Y + 8) + '" class="bs-endcap"/>';
+
+      for (let k = 0; k <= denominator; k += 1) {
+        const x = X0 + (X1 - X0) * (k / denominator);
+        const birth = birthLevel(k, denominator);
+        const isEndpoint = k === 0 || k === denominator;
+        const isNew = current > 0 && birth === current;
+
+        let tickHeight = 11;
+        if (isEndpoint) tickHeight = 30;
+        else if (birth === 1) tickHeight = 28;
+        else if (birth === 2) tickHeight = 23;
+        else if (birth === 3) tickHeight = 19;
+        else if (birth === 4) tickHeight = 16;
+        else tickHeight = 13;
+
+        const tickClass = isNew ? "bs-tick bs-new" : "bs-tick bs-existing";
+        markup += '<line x1="' + x + '" y1="' + (Y - tickHeight) + '" x2="' + x + '" y2="' + (Y + tickHeight) + '" class="' + tickClass + '"/>';
+
+        if (isNew) {
+          markup += '<circle cx="' + x + '" cy="' + Y + '" r="6" class="bs-midpoint bs-new"/>';
+        }
+
+        if (shouldLabel(k, denominator, current, birth)) {
+          const fraction = reducedFraction(k, denominator);
+          const y = labelY(k, current, isNew);
+          const anchorClass = isNew ? "bs-fraction bs-new-label" : "bs-fraction";
+          markup += '<text x="' + x + '" y="' + y + '" text-anchor="middle" class="' + anchorClass + '">' + fraction.label + '</text>';
+        }
+      }
+
+      if (current > 0) {
+        const subWidth = (X1 - X0) / denominator;
+        const bracketY = Y + 92;
+        markup += '<line x1="' + X0 + '" y1="' + bracketY + '" x2="' + (X0 + subWidth) + '" y2="' + bracketY + '" class="bs-spacing-line"/>';
+        markup += '<line x1="' + X0 + '" y1="' + (bracketY - 6) + '" x2="' + X0 + '" y2="' + (bracketY + 6) + '" class="bs-spacing-line"/>';
+        markup += '<line x1="' + (X0 + subWidth) + '" y1="' + (bracketY - 6) + '" x2="' + (X0 + subWidth) + '" y2="' + (bracketY + 6) + '" class="bs-spacing-line"/>';
+        markup += '<text x="' + (X0 + subWidth / 2) + '" y="' + (bracketY + 28) + '" text-anchor="middle" class="bs-spacing-label">1/' + denominator + '</text>';
       }
 
       svg.innerHTML = markup;
 
-      const intervals = 2 ** current;
-      const spacing = current === 0 ? "1" : "1/" + intervals;
+      const intervals = denominator;
+      const spacing = current === 0 ? "1" : "1/" + denominator;
 
       status.textContent = describe(current);
       if (levelReadout) levelReadout.textContent = String(current);
@@ -423,9 +447,6 @@
 
       previous.disabled = current === 0;
       next.disabled = current === MAX_LEVEL;
-
-      const newest = newFractionsForLevel(current);
-      panel.dataset.newFractions = newest.join(", ");
     }
 
     function stop() {
@@ -469,7 +490,7 @@
       if (current === MAX_LEVEL) current = 0;
       render();
       play.textContent = "Pause";
-      timer = setInterval(advance, 1500);
+      timer = setInterval(advance, 1400);
     });
 
     render();
