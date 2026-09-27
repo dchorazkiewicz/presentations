@@ -864,3 +864,124 @@ body.interactive-stage-open .deck-toolbar {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Successive bisection explorer */
+.bisection-panel {
+  min-width: 0;
+}
+
+.bisection-svg {
+  width: 100%;
+  height: 310px;
+  display: block;
+  border-radius: 12px;
+  background: rgba(3,7,18,.58);
+}
+
+.bs-baseline {
+  stroke: #cbd5e1;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.bs-tick {
+  stroke: #94a3b8;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.bs-midpoint {
+  fill: #fbbf24;
+  stroke: #fde68a;
+  stroke-width: 2;
+}
+
+.bs-fraction {
+  fill: #cbd5e1;
+  font: 600 17px/1 system-ui, sans-serif;
+}
+
+.bs-new-label {
+  fill: #fde68a;
+  font-weight: 800;
+}
+
+.bs-level-label {
+  fill: #7dd3fc;
+  font: 800 16px/1 system-ui, sans-serif;
+}
+
+.bisection-row.is-active .bs-baseline {
+  stroke: #e2e8f0;
+}
+
+.bs-new {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bisection-pop .5s ease-out both;
+}
+
+.bs-new-label {
+  animation: bisection-label .7s ease-out both;
+}
+
+@keyframes bisection-pop {
+  0% { opacity: 0; transform: scaleY(.08) scaleX(.55); }
+  65% { opacity: 1; transform: scaleY(1.16) scaleX(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bisection-label {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bisection-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 10px;
+  font: 650 13px/1.2 system-ui, sans-serif;
+}
+
+.bisection-readout span {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+  color: var(--muted);
+}
+
+.bisection-readout strong {
+  margin-left: 4px;
+  color: #e0f2fe;
+}
+
+.interactive-stage .bisection-svg {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+}
+
+.interactive-stage .bisection-readout {
+  flex: 0 0 auto;
+  font-size: 15px;
+}
+
+@media (max-width: 700px) {
+  .bisection-svg {
+    height: 330px;
+  }
+
+  .bs-fraction {
+    font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bs-new,
+  .bs-new-label {
+    animation: none;
+  }
+}
